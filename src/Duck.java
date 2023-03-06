@@ -9,8 +9,8 @@ public class Duck {
         JFrame frame = new JFrame("Rubber Duck");
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(true);
-        frame.setSize(500, 700);
+        frame.setResizable(false);
+        frame.setSize(500, 750);
         ImageIcon img = new ImageIcon("src/duck.png");
         Image scaleImage = img.getImage().getScaledInstance(250, 250, Image.SCALE_DEFAULT);
         ImageIcon icon = new ImageIcon(scaleImage);
@@ -24,9 +24,15 @@ public class Duck {
         textField.setBounds(0,400,500,50);
         frame.add(textField);
 
-        JTextField textField1 = new JTextField();
-        textField1.setBounds(0,475,500,200);
+        JTextArea textField1 = new JTextArea();
+        textField1.setBounds(5,475,480,250);
         textField1.setEditable(false);
+        Font newTextFieldFont=new Font(textField.getFont().getName(),textField.getFont().getStyle(),12);
+        textField1.setFont(newTextFieldFont);
+        textField.setFont(newTextFieldFont);
+        textField.setHorizontalAlignment(SwingConstants.LEFT);
+        textField1.setLineWrap(true);
+        textField1.setWrapStyleWord(true);
         frame.add(textField1);
 
         JButton button = new JButton("Ask!");
@@ -38,29 +44,26 @@ public class Duck {
             String string;
             try {
                 string = chatGPT(textField.getText());
+                textField1.setText(string);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            /*
             for(int i = 0; i<string.length(); i++){
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
                 textField1.setText(textField1.getText() + string.charAt(i));
-                if(string.charAt(i) == '.')
-                    textField1.setText(textField1.getText() + "\n");
-            }
+            }*/
+
         });
 
         frame.setVisible(true);
-
+/*
         String x = chatGPT("what is your name?");
         for(int i = 0; i<x.length(); i++) {
             System.out.print(x.charAt(i));
             if(x.charAt(i) == '.')
                 System.out.println();
         }
+ */
     }
     public static String chatGPT(String str) throws IOException {
         String url = "https://api.openai.com/v1/chat/completions";
@@ -76,7 +79,7 @@ public class Duck {
         con.setRequestProperty("Content-Type", "application/json");
 
         // Build the request body
-        String body = "{\"model\": \"" + model + "\", \"messages\": [{\"role\": \"user\", \"content\": \"" + message + "\"}]}";
+        String body = "{\"model\": \"" + model + "\", \"messages\": [{\"role\": \"user\", \"content\": \"" + "You will pretend to be a duck people talk to to get programming answers. You must answer the following question after the semicolon. Refer to yourself as rubber duck and not as an AI. If you understood all of that then answer this: " +message + "\"}]}";
         con.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
         writer.write(body);
